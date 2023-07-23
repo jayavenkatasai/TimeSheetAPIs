@@ -57,8 +57,15 @@ namespace TIMESHEETAPI.Controllers
             {
                 return BadRequest("Wrong Password");
             }
+           
             string token = CreateToken(registrations);
-            return Ok(token);
+            var loginresponse = new loginResponse
+            {
+                id = registrations.EmployeeID,
+                code = token
+
+            };
+            return Ok(loginresponse);
         }
 
         private string CreateToken(Registeration registeration)
