@@ -9,6 +9,6 @@ namespace TIMESHEETAPI.DataModels
         [Required]
         public string ActivityName { get; set; }
 
-        public virtual ICollection<TaskModel> Tasks { get; set; }
+        public virtual ICollection<TaskModelDto> Tasks { get; set; }
     }
 }

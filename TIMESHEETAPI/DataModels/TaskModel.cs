@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TIMESHEETAPI.DataModels
 {
-    public class TaskModel
+    public class TaskModelDto
     {
         [Required]
         [Key]
