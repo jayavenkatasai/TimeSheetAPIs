@@ -44,13 +44,13 @@ namespace TIMESHEETAPI.Controllers
             return getActivityList;
         }
         [HttpPost("Project")]
-        public async Task<ActionResult<List<ActivityModel>>> AddaProject(ActivityDto dto)
+        public async Task<ActionResult<List<ProjectModel>>> AddaProject(ProjectDTO dto)
         {
-            var activity = new ActivityModel();
-            activity.ActivityName = dto.ActivityName;
-            _context.ActivityModels.Add(activity);
+            var Project = new ProjectModel();
+            Project.ProjectName = dto.ProjectName;
+            _context.ProjectModels.Add(Project);
             await _context.SaveChangesAsync();
-            var activityList = await _context.ActivityModels.ToListAsync();
+            var activityList = await _context.ProjectModels.ToListAsync();
             return activityList;
         }
 
