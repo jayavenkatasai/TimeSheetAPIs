@@ -12,8 +12,8 @@ using TIMESHEETAPI.Data;
 namespace TIMESHEETAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230723082856_newregistrationtable")]
-    partial class newregistrationtable
+    [Migration("20230724105850_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,23 @@ namespace TIMESHEETAPI.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("TIMESHEETAPI.DataModels.ActivityModel", b =>
+                {
+                    b.Property<int>("ActivityId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ActivityId"));
+
+                    b.Property<string>("ActivityName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ActivityId");
+
+                    b.ToTable("ActivityModels");
+                });
 
             modelBuilder.Entity("TIMESHEETAPI.DataModels.NewRegisterationEmployee", b =>
                 {
@@ -65,6 +82,23 @@ namespace TIMESHEETAPI.Migrations
                     b.ToTable("NewRegisterationEmployees");
                 });
 
+            modelBuilder.Entity("TIMESHEETAPI.DataModels.ProjectModel", b =>
+                {
+                    b.Property<int>("ProjectId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProjectId"));
+
+                    b.Property<string>("ProjectName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ProjectId");
+
+                    b.ToTable("ProjectModels");
+                });
+
             modelBuilder.Entity("TIMESHEETAPI.DataModels.Registeration", b =>
                 {
                     b.Property<int>("EmployeeID")
@@ -94,6 +128,47 @@ namespace TIMESHEETAPI.Migrations
                     b.ToTable("registerations");
                 });
 
+            modelBuilder.Entity("TIMESHEETAPI.DataModels.TaskModel", b =>
+                {
+                    b.Property<int>("TaskId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TaskId"));
+
+                    b.Property<int>("ActivityID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EmployeeID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Hours")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProjectID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Task_date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("registerationEmployeeID")
+                        .HasColumnType("int");
+
+                    b.HasKey("TaskId");
+
+                    b.HasIndex("ActivityID");
+
+                    b.HasIndex("ProjectID");
+
+                    b.HasIndex("registerationEmployeeID");
+
+                    b.ToTable("TaskModels");
+                });
+
             modelBuilder.Entity("TIMESHEETAPI.SuperHero", b =>
                 {
                     b.Property<int?>("id")
@@ -121,6 +196,43 @@ namespace TIMESHEETAPI.Migrations
                     b.HasKey("id");
 
                     b.ToTable("superHeroes");
+                });
+
+            modelBuilder.Entity("TIMESHEETAPI.DataModels.TaskModel", b =>
+                {
+                    b.HasOne("TIMESHEETAPI.DataModels.ActivityModel", "Activity")
+                        .WithMany("Tasks")
+                        .HasForeignKey("ActivityID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TIMESHEETAPI.DataModels.ProjectModel", "ProjectModel")
+                        .WithMany("Tasks")
+                        .HasForeignKey("ProjectID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TIMESHEETAPI.DataModels.Registeration", "registeration")
+                        .WithMany()
+                        .HasForeignKey("registerationEmployeeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Activity");
+
+                    b.Navigation("ProjectModel");
+
+                    b.Navigation("registeration");
+                });
+
+            modelBuilder.Entity("TIMESHEETAPI.DataModels.ActivityModel", b =>
+                {
+                    b.Navigation("Tasks");
+                });
+
+            modelBuilder.Entity("TIMESHEETAPI.DataModels.ProjectModel", b =>
+                {
+                    b.Navigation("Tasks");
                 });
 #pragma warning restore 612, 618
         }

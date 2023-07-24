@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TIMESHEETAPI.DataModels
 {
@@ -18,13 +19,14 @@ namespace TIMESHEETAPI.DataModels
         public int EmployeeID { get; set; }
 
         public int ActivityID { get; set; }
-
+        [Required]
         public int ProjectID { get; set; }
 
-        public virtual ProjectModel ProjectModel { get; set; }  
+		[ForeignKey("ProjectID")]
+		public virtual ProjectModel ProjectModel { get; set; }  
         public virtual ActivityModel Activity { get; set; }
-
-        public virtual Registeration registeration { get; set; }
+		[ForeignKey("EmployeeID")]
+		public virtual Registeration registeration { get; set; }
 
 
 

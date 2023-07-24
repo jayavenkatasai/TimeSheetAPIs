@@ -12,8 +12,8 @@ using TIMESHEETAPI.Data;
 namespace TIMESHEETAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230723162523_newtablescreation")]
-    partial class newtablescreation
+    [Migration("20230724112556_second")]
+    partial class second
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -152,22 +152,16 @@ namespace TIMESHEETAPI.Migrations
                     b.Property<int>("ProjectID")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProjectModelProjectId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("Task_date")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("registerationEmployeeID")
-                        .HasColumnType("int");
 
                     b.HasKey("TaskId");
 
                     b.HasIndex("ActivityID");
 
-                    b.HasIndex("ProjectModelProjectId");
+                    b.HasIndex("EmployeeID");
 
-                    b.HasIndex("registerationEmployeeID");
+                    b.HasIndex("ProjectID");
 
                     b.ToTable("TaskModels");
                 });
@@ -209,15 +203,15 @@ namespace TIMESHEETAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TIMESHEETAPI.DataModels.ProjectModel", "ProjectModel")
-                        .WithMany("Tasks")
-                        .HasForeignKey("ProjectModelProjectId")
+                    b.HasOne("TIMESHEETAPI.DataModels.Registeration", "registeration")
+                        .WithMany()
+                        .HasForeignKey("EmployeeID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TIMESHEETAPI.DataModels.Registeration", "registeration")
-                        .WithMany()
-                        .HasForeignKey("registerationEmployeeID")
+                    b.HasOne("TIMESHEETAPI.DataModels.ProjectModel", "ProjectModel")
+                        .WithMany("Tasks")
+                        .HasForeignKey("ProjectID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

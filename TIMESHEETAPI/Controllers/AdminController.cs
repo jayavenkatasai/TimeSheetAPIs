@@ -54,12 +54,18 @@ namespace TIMESHEETAPI.Controllers
             return activityList;
         }
 
-
-
-
-
-
-
-
+        [HttpGet("GetAllProjects")]
+        public async Task<ActionResult<List<GetProjectDto>>> GetProj()
+        {
+            var projlist = await _context.ProjectModels.ToListAsync();
+            var proj = (from projl in projlist
+                        select new GetProjectDto
+                        {
+                            ProjectId = projl.ProjectId,
+                            ProjectName = projl.ProjectName
+                        }
+                        ).ToList();
+            return Ok(proj);
+        }
     }
 }

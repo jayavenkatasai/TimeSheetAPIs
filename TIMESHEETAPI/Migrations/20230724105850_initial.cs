@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TIMESHEETAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class newtablescreation : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -25,6 +25,26 @@ namespace TIMESHEETAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "NewRegisterationEmployees",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UsserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    VerificationToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Verifiedat = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PasswordresetToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    passwordTokenExpires = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NewRegisterationEmployees", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ProjectModels",
                 columns: table => new
                 {
@@ -35,6 +55,38 @@ namespace TIMESHEETAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ProjectModels", x => x.ProjectId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "registerations",
+                columns: table => new
+                {
+                    EmployeeID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UsserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_registerations", x => x.EmployeeID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "superHeroes",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Hero = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_superHeroes", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -49,7 +101,6 @@ namespace TIMESHEETAPI.Migrations
                     EmployeeID = table.Column<int>(type: "int", nullable: false),
                     ActivityID = table.Column<int>(type: "int", nullable: false),
                     ProjectID = table.Column<int>(type: "int", nullable: false),
-                    ProjectModelProjectId = table.Column<int>(type: "int", nullable: false),
                     registerationEmployeeID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -62,8 +113,8 @@ namespace TIMESHEETAPI.Migrations
                         principalColumn: "ActivityId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TaskModels_ProjectModels_ProjectModelProjectId",
-                        column: x => x.ProjectModelProjectId,
+                        name: "FK_TaskModels_ProjectModels_ProjectID",
+                        column: x => x.ProjectID,
                         principalTable: "ProjectModels",
                         principalColumn: "ProjectId",
                         onDelete: ReferentialAction.Cascade);
@@ -81,9 +132,9 @@ namespace TIMESHEETAPI.Migrations
                 column: "ActivityID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskModels_ProjectModelProjectId",
+                name: "IX_TaskModels_ProjectID",
                 table: "TaskModels",
-                column: "ProjectModelProjectId");
+                column: "ProjectID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TaskModels_registerationEmployeeID",
@@ -95,6 +146,12 @@ namespace TIMESHEETAPI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "NewRegisterationEmployees");
+
+            migrationBuilder.DropTable(
+                name: "superHeroes");
+
+            migrationBuilder.DropTable(
                 name: "TaskModels");
 
             migrationBuilder.DropTable(
@@ -102,6 +159,9 @@ namespace TIMESHEETAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "ProjectModels");
+
+            migrationBuilder.DropTable(
+                name: "registerations");
         }
     }
 }
