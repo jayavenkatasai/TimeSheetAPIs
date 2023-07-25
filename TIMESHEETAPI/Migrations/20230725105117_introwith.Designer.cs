@@ -12,8 +12,8 @@ using TIMESHEETAPI.Data;
 namespace TIMESHEETAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230724105850_initial")]
-    partial class initial
+    [Migration("20230725105117_introwith")]
+    partial class introwith
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -111,14 +111,6 @@ namespace TIMESHEETAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<byte[]>("PasswordSalt")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
                     b.Property<string>("UsserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -128,7 +120,7 @@ namespace TIMESHEETAPI.Migrations
                     b.ToTable("registerations");
                 });
 
-            modelBuilder.Entity("TIMESHEETAPI.DataModels.TaskModel", b =>
+            modelBuilder.Entity("TIMESHEETAPI.DataModels.TaskModelDto", b =>
                 {
                     b.Property<int>("TaskId")
                         .ValueGeneratedOnAdd()
@@ -153,20 +145,43 @@ namespace TIMESHEETAPI.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Task_date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("registerationEmployeeID")
-                        .HasColumnType("int");
+                        .HasColumnType("date");
 
                     b.HasKey("TaskId");
 
                     b.HasIndex("ActivityID");
 
+                    b.HasIndex("EmployeeID");
+
                     b.HasIndex("ProjectID");
 
-                    b.HasIndex("registerationEmployeeID");
-
                     b.ToTable("TaskModels");
+                });
+
+            modelBuilder.Entity("TIMESHEETAPI.DataModels.UserOauth", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EmployeeID")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.ToTable("UserOauths");
                 });
 
             modelBuilder.Entity("TIMESHEETAPI.SuperHero", b =>
@@ -198,11 +213,17 @@ namespace TIMESHEETAPI.Migrations
                     b.ToTable("superHeroes");
                 });
 
-            modelBuilder.Entity("TIMESHEETAPI.DataModels.TaskModel", b =>
+            modelBuilder.Entity("TIMESHEETAPI.DataModels.TaskModelDto", b =>
                 {
                     b.HasOne("TIMESHEETAPI.DataModels.ActivityModel", "Activity")
                         .WithMany("Tasks")
                         .HasForeignKey("ActivityID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TIMESHEETAPI.DataModels.Registeration", "registeration")
+                        .WithMany()
+                        .HasForeignKey("EmployeeID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -212,17 +233,22 @@ namespace TIMESHEETAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TIMESHEETAPI.DataModels.Registeration", "registeration")
-                        .WithMany()
-                        .HasForeignKey("registerationEmployeeID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Activity");
 
                     b.Navigation("ProjectModel");
 
                     b.Navigation("registeration");
+                });
+
+            modelBuilder.Entity("TIMESHEETAPI.DataModels.UserOauth", b =>
+                {
+                    b.HasOne("TIMESHEETAPI.DataModels.Registeration", "Registerations")
+                        .WithMany()
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Registerations");
                 });
 
             modelBuilder.Entity("TIMESHEETAPI.DataModels.ActivityModel", b =>

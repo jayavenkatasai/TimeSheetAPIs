@@ -18,5 +18,7 @@ namespace TIMESHEETAPI.Data
         public DbSet<ActivityModel> ActivityModels { get; set; }
         public DbSet<ProjectModel> ProjectModels { get; set; }
         public DbSet<TaskModelDto> TaskModels { get; set; }
+
+        public DbSet<UserOauth> UserOauths { get; set; }
     }
 }

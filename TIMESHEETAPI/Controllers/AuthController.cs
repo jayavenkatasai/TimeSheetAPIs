@@ -35,25 +35,33 @@ namespace TIMESHEETAPI.Controllers
                 Email = request.Email,
                 UsserName = request.UsserName
             };
-            CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passworSalt);
-            
-            registeration.PasswordHash = passwordHash;
+			_context.registerations.Add(registeration);
+			await _context.SaveChangesAsync();
+			CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passworSalt);
+            var Userauthh = new UserOauth
+            {
+                
+                PasswordHash = passwordHash,
+                PasswordSalt = passworSalt
 
-            registeration.PasswordSalt= passworSalt;
-          _context.registerations.Add(registeration);
-          await _context.SaveChangesAsync();
-            return Ok( registeration);
+            };
+            
+            Userauthh.EmployeeID = registeration.EmployeeID;
+            _context.UserOauths.Add(Userauthh);
+			await _context.SaveChangesAsync();
+
+			return Ok( registeration);
         }
         [HttpPost ("login")]
         public async Task<ActionResult<string>> login(loginDto login)
         {
             var registrations = await _context.registerations.FirstOrDefaultAsync(r=> r.Email == login.Email);
-
+            var Ouathusers = await _context.UserOauths.FirstOrDefaultAsync(o => o.Id == registrations.EmployeeID);
             if(registrations == null || registrations.Email!= login.Email)
             {
                 return BadRequest("No user Founf");
             }
-            if (!VerifyPassword(login.Password, registrations.PasswordHash, registrations.PasswordSalt))
+            if (!VerifyPassword(login.Password, Ouathusers.PasswordHash, Ouathusers.PasswordSalt))
             {
                 return BadRequest("Wrong Password");
             }

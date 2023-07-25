@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using TIMESHEETAPI.Data;
 using TIMESHEETAPI.DataModels;
 using TIMESHEETAPI.DTO_Models;
@@ -21,10 +23,13 @@ namespace TIMESHEETAPI.Controllers
 		public async Task<ActionResult<TaskUpdateDto>> AddTask(TaskUpdateDto dto)
 		{
 			var taskk = new TaskModelDto();
-			
+			var userEmail = User?.FindFirstValue(ClaimTypes.Email);
+			//var oath = await _context.registerations.FirstOrDefaultAsync(i => i.Email == userEmail);
+			var oaths = await (from i in _context.registerations where i.Email == userEmail select i.EmployeeID).FirstOrDefaultAsync();
+			taskk.EmployeeID = oaths;
 			taskk.Description = dto.Description;
 			taskk.ActivityID = dto.ActivityID;
-			taskk.EmployeeID = dto.EmployeeID;
+			//taskk.EmployeeID = dto.EmployeeID;
 			taskk.ProjectID = dto.ProjectID;
 			taskk.Task_date = dto.Task_date;
 			taskk.Hours = dto.Hours;
@@ -98,6 +103,32 @@ namespace TIMESHEETAPI.Controllers
 			_context.TaskModels.Remove(taskk);
 			await _context.SaveChangesAsync();
 			return Ok("Deleted Task Succesfully");
+		}
+		[HttpGet("AllTasksByID"),Authorize]
+		public async Task<ActionResult<List<TaskModelDto>>> AllTAsksById()
+		{
+			var userEmail = User?.FindFirstValue(ClaimTypes.Email);
+			//var oath = await _context.registerations.FirstOrDefaultAsync(i => i.Email == userEmail);
+			var oaths = await (from i in _context.registerations where i.Email == userEmail select i.EmployeeID).FirstOrDefaultAsync();
+			var tasklist = await (from i in _context.TaskModels
+								  where i.EmployeeID == oaths
+								  join P in _context.ProjectModels on i.ProjectID equals P.ProjectId
+								  join A in _context.ActivityModels on i.ActivityID equals A.ActivityId
+								  join R in _context.registerations on i.EmployeeID equals R.EmployeeID
+								  select new AllTasksDto
+								  {
+
+									  ActivityName = i.Activity.ActivityName,
+									  projectName = i.ProjectModel.ProjectName,
+									  Description = i.Description,
+									  TotalHours = i.Hours,
+									  Created = i.Task_date,
+									  UserEmail = i.registeration.Email,
+									  UserName = i.registeration.UsserName
+								  }
+								  ).ToListAsync();
+			return Ok(tasklist);
+
 		}
 	}
 }

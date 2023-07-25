@@ -11,7 +11,8 @@ namespace TIMESHEETAPI.DataModels
         [Required]
         public string Description { get; set; }
         [Required]
-        public DateTime Task_date { get; set; }
+		[Column(TypeName = "date")]
+		public DateTime Task_date { get; set; }
 
         [Required]
         public int Hours { get; set; }

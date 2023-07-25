@@ -12,8 +12,8 @@ using TIMESHEETAPI.Data;
 namespace TIMESHEETAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230724112556_second")]
-    partial class second
+    [Migration("20230725061502_fkintro")]
+    partial class fkintro
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -111,14 +111,6 @@ namespace TIMESHEETAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<byte[]>("PasswordSalt")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
                     b.Property<string>("UsserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -128,7 +120,7 @@ namespace TIMESHEETAPI.Migrations
                     b.ToTable("registerations");
                 });
 
-            modelBuilder.Entity("TIMESHEETAPI.DataModels.TaskModel", b =>
+            modelBuilder.Entity("TIMESHEETAPI.DataModels.TaskModelDto", b =>
                 {
                     b.Property<int>("TaskId")
                         .ValueGeneratedOnAdd()
@@ -166,6 +158,32 @@ namespace TIMESHEETAPI.Migrations
                     b.ToTable("TaskModels");
                 });
 
+            modelBuilder.Entity("TIMESHEETAPI.DataModels.UserOauth", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EmployeeID")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.ToTable("UserOauths");
+                });
+
             modelBuilder.Entity("TIMESHEETAPI.SuperHero", b =>
                 {
                     b.Property<int?>("id")
@@ -195,7 +213,7 @@ namespace TIMESHEETAPI.Migrations
                     b.ToTable("superHeroes");
                 });
 
-            modelBuilder.Entity("TIMESHEETAPI.DataModels.TaskModel", b =>
+            modelBuilder.Entity("TIMESHEETAPI.DataModels.TaskModelDto", b =>
                 {
                     b.HasOne("TIMESHEETAPI.DataModels.ActivityModel", "Activity")
                         .WithMany("Tasks")
@@ -222,6 +240,17 @@ namespace TIMESHEETAPI.Migrations
                     b.Navigation("registeration");
                 });
 
+            modelBuilder.Entity("TIMESHEETAPI.DataModels.UserOauth", b =>
+                {
+                    b.HasOne("TIMESHEETAPI.DataModels.Registeration", "Registerations")
+                        .WithMany("UserOauths")
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Registerations");
+                });
+
             modelBuilder.Entity("TIMESHEETAPI.DataModels.ActivityModel", b =>
                 {
                     b.Navigation("Tasks");
@@ -230,6 +259,11 @@ namespace TIMESHEETAPI.Migrations
             modelBuilder.Entity("TIMESHEETAPI.DataModels.ProjectModel", b =>
                 {
                     b.Navigation("Tasks");
+                });
+
+            modelBuilder.Entity("TIMESHEETAPI.DataModels.Registeration", b =>
+                {
+                    b.Navigation("UserOauths");
                 });
 #pragma warning restore 612, 618
         }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TIMESHEETAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class fkintro : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -64,9 +64,7 @@ namespace TIMESHEETAPI.Migrations
                     EmployeeID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UsserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
+                    UsserName = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -100,8 +98,7 @@ namespace TIMESHEETAPI.Migrations
                     Hours = table.Column<int>(type: "int", nullable: false),
                     EmployeeID = table.Column<int>(type: "int", nullable: false),
                     ActivityID = table.Column<int>(type: "int", nullable: false),
-                    ProjectID = table.Column<int>(type: "int", nullable: false),
-                    registerationEmployeeID = table.Column<int>(type: "int", nullable: false)
+                    ProjectID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -119,8 +116,29 @@ namespace TIMESHEETAPI.Migrations
                         principalColumn: "ProjectId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TaskModels_registerations_registerationEmployeeID",
-                        column: x => x.registerationEmployeeID,
+                        name: "FK_TaskModels_registerations_EmployeeID",
+                        column: x => x.EmployeeID,
+                        principalTable: "registerations",
+                        principalColumn: "EmployeeID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserOauths",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    EmployeeID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserOauths", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserOauths_registerations_EmployeeID",
+                        column: x => x.EmployeeID,
                         principalTable: "registerations",
                         principalColumn: "EmployeeID",
                         onDelete: ReferentialAction.Cascade);
@@ -132,14 +150,19 @@ namespace TIMESHEETAPI.Migrations
                 column: "ActivityID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TaskModels_EmployeeID",
+                table: "TaskModels",
+                column: "EmployeeID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TaskModels_ProjectID",
                 table: "TaskModels",
                 column: "ProjectID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskModels_registerationEmployeeID",
-                table: "TaskModels",
-                column: "registerationEmployeeID");
+                name: "IX_UserOauths_EmployeeID",
+                table: "UserOauths",
+                column: "EmployeeID");
         }
 
         /// <inheritdoc />
@@ -153,6 +176,9 @@ namespace TIMESHEETAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "TaskModels");
+
+            migrationBuilder.DropTable(
+                name: "UserOauths");
 
             migrationBuilder.DropTable(
                 name: "ActivityModels");
