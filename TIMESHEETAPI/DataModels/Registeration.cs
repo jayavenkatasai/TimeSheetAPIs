@@ -11,9 +11,14 @@ namespace TIMESHEETAPI.DataModels
 
         [EmailAddress]
         public string Email { get;set; } = string.Empty;
-        public string UsserName { get; set; } = string.Empty;   
+        public string UsserName { get; set; } = string.Empty;
+		public bool IsVerified { get; set; }
 
-     
+		public string? VerificationToken { get; set; }
+        public bool IsOtpVerified { get;set; }
+        public string? OtpVerificationToken { get; set; }
 
-    }
+
+
+	}
 }

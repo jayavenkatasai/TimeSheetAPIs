@@ -180,3 +180,11 @@ D:\TimeSheetAPIs\TIMESHEETAPI\obj\Debug\net6.0\refint\TIMESHEETAPI.dll
 D:\TimeSheetAPIs\TIMESHEETAPI\obj\Debug\net6.0\TIMESHEETAPI.pdb
 D:\TimeSheetAPIs\TIMESHEETAPI\obj\Debug\net6.0\TIMESHEETAPI.genruntimeconfig.cache
 D:\TimeSheetAPIs\TIMESHEETAPI\obj\Debug\net6.0\ref\TIMESHEETAPI.dll
+D:\TimeSheetAPIs\TIMESHEETAPI\bin\Debug\net6.0\BouncyCastle.Cryptography.dll
+D:\TimeSheetAPIs\TIMESHEETAPI\bin\Debug\net6.0\MailKit.dll
+D:\TimeSheetAPIs\TIMESHEETAPI\bin\Debug\net6.0\MimeKit.dll
+D:\TimeSheetAPIs\TIMESHEETAPI\bin\Debug\net6.0\System.Formats.Asn1.dll
+D:\TimeSheetAPIs\TIMESHEETAPI\bin\Debug\net6.0\System.Security.Cryptography.Pkcs.dll
+D:\TimeSheetAPIs\TIMESHEETAPI\bin\Debug\net6.0\System.Text.Encoding.CodePages.dll
+D:\TimeSheetAPIs\TIMESHEETAPI\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Security.Cryptography.Pkcs.dll
+D:\TimeSheetAPIs\TIMESHEETAPI\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Text.Encoding.CodePages.dll

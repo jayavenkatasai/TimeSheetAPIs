@@ -9,6 +9,7 @@ using System.Text;
 using TIMESHEETAPI.Data;
 using TIMESHEETAPI.DataModels;
 using TIMESHEETAPI.DTO_Models;
+using static TIMESHEETAPI.Services.emailService;
 
 namespace TIMESHEETAPI.Controllers
 {
@@ -20,21 +21,38 @@ namespace TIMESHEETAPI.Controllers
        // public static Registeration registeration = new Registeration();
         private DataContext _context;
         private readonly IConfiguration _configuration;
+		private readonly IEmailService _emailService;
 
-        public AuthController(DataContext context, IConfiguration configuration)
+		public AuthController(DataContext context, IConfiguration configuration, IEmailService emailService)
         {
             _context = context;
             _configuration = configuration;
-        }
+		    _emailService = emailService;
+		}
 
         [HttpPost("register")]
-        public async Task<ActionResult<Registeration>> Register(Register_Dto request)
+        public async Task<ActionResult> Register(Register_Dto request)
         {
-            var registeration = new Registeration
+			var emailv = await _context.registerations.AnyAsync(r=> r.Email == request.Email);
+			var emailvv = await(from i in _context.registerations where i.Email == request.Email select i).AnyAsync();	
+			if (emailv)
+			{
+				return BadRequest("User Already Exsist");
+			}
+			var verificationToken = GenerateRandomString();
+			var otptoken = GenerateOtp();
+			var registeration = new Registeration
             {
                 Email = request.Email,
-                UsserName = request.UsserName
-            };
+                UsserName = request.UsserName,
+
+				VerificationToken = verificationToken,
+				IsVerified = false ,// Set to false initially,
+                IsOtpVerified = false ,
+				
+			 OtpVerificationToken = otptoken
+
+		};
 			_context.registerations.Add(registeration);
 			await _context.SaveChangesAsync();
 			CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passworSalt);
@@ -44,20 +62,44 @@ namespace TIMESHEETAPI.Controllers
                 PasswordHash = passwordHash,
                 PasswordSalt = passworSalt
 
+
             };
             
             Userauthh.EmployeeID = registeration.EmployeeID;
             _context.UserOauths.Add(Userauthh);
 			await _context.SaveChangesAsync();
+			await _emailService.SendVerificationEmailAsync(request.Email, verificationToken);
 
-			return Ok( registeration);
+			return Ok("User Created Confirm with Otp sent via your Mail");
         }
-        [HttpPost ("login")]
+		[HttpPost("verify")]
+		public async Task<ActionResult> Verify(string email, string token)
+		{
+			// Find the user with the provided email and verification token
+			var user = await _context.registerations.FirstOrDefaultAsync(r => r.Email == email && r.VerificationToken == token);
+
+			if (user == null)
+			{
+				return BadRequest("Invalid verification token or email");
+			}
+      
+			// Mark the user as verified in the database
+			user.IsVerified = true;
+			user.VerificationToken = null;
+			_context.Update(user);
+			await _context.SaveChangesAsync();
+
+			// You can return a success message or redirect the user to a success page after verification.
+			return Ok("Email verification successful.");
+		}
+
+		[HttpPost ("login")]
         public async Task<ActionResult<string>> login(loginDto login)
         {
             var registrations = await _context.registerations.FirstOrDefaultAsync(r=> r.Email == login.Email);
             var Ouathusers = await _context.UserOauths.FirstOrDefaultAsync(o => o.Id == registrations.EmployeeID);
-            if(registrations == null || registrations.Email!= login.Email)
+			
+			if (registrations == null || registrations.Email!= login.Email)
             {
                 return BadRequest("No user Founf");
             }
@@ -66,17 +108,40 @@ namespace TIMESHEETAPI.Controllers
                 return BadRequest("Wrong Password");
             }
            
-            string token = CreateToken(registrations);
+			
+			string token = CreateToken(registrations);
             var loginresponse = new loginResponse
             {
                 id = registrations.EmployeeID,
                 code = token
 
             };
-            return Ok(loginresponse);
-        }
+			await _emailService.SendVerificationEmailAsync(registrations.Email, registrations.OtpVerificationToken);
 
-        private string CreateToken(Registeration registeration)
+			return Ok(loginresponse);
+        }
+		[HttpPost("verifyLogin")]
+		public async Task<ActionResult> VerifyLogin(string email, string token)
+		{
+			// Find the user with the provided email and verification token
+			var user = await _context.registerations.FirstOrDefaultAsync(r => r.Email == email && r.OtpVerificationToken == token);
+
+			if (user == null)
+			{
+				return BadRequest("Invalid verification token or email");
+			}
+
+			// Mark the user as verified in the database
+			user.IsOtpVerified = true;
+			user.OtpVerificationToken = null;
+			_context.Update(user);
+			await _context.SaveChangesAsync();
+
+			// You can return a success message or redirect the user to a success page after verification.
+			return Ok("Email verification successful.");
+		}
+
+		private string CreateToken(Registeration registeration)
         {
             List<Claim> claims = new List<Claim>
             {
@@ -109,5 +174,36 @@ namespace TIMESHEETAPI.Controllers
                 return computedHash.SequenceEqual(passswordHash);
             }
         }
-    }
+		public static string GenerateRandomString()
+		{
+			const string allowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+			const int length = 6;
+
+			Random random = new Random();
+			char[] chars = new char[length];
+
+			for (int i = 0; i < length; i++)
+			{
+				chars[i] = allowedChars[random.Next(0, allowedChars.Length)];
+			}
+
+			return new string(chars);
+		}
+		public static string GenerateOtp()
+		{
+			const string allowedChars = "0123456789";
+			const int length = 6;
+
+			Random random = new Random();
+			char[] chars = new char[length];
+
+			for (int i = 0; i < length; i++)
+			{
+				chars[i] = allowedChars[random.Next(0, allowedChars.Length)];
+			}
+
+			return new string(chars);
+		}
+	}
 }
+ 
