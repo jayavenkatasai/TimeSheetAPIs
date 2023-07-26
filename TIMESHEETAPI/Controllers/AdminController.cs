@@ -48,14 +48,14 @@ namespace TIMESHEETAPI.Controllers
             // Return the list of GetActivityDto
             return getActivityList;
         }
-        [HttpPost("Project"), Authorize]
+        [HttpPost("Project")]
         public async Task<ActionResult<List<ProjectModel>>> AddaProject(ProjectDTO dto)
         {
-            var reg = new Registeration();
-			var userEmail = User?.FindFirstValue(ClaimTypes.Email);
-			var oath = await _context.registerations.FirstOrDefaultAsync(i => i.Email == userEmail);
-			var oaths = await (from i in _context.registerations where i.Email == userEmail select i.EmployeeID).FirstOrDefaultAsync();
-			var id = oath.EmployeeID;
+         //   var reg = new Registeration();
+		//	var userEmail = User?.FindFirstValue(ClaimTypes.Email);
+		//	var oath = await _context.registerations.FirstOrDefaultAsync(i => i.Email == userEmail);
+		//	var oaths = await (from i in _context.registerations where i.Email == userEmail select i.EmployeeID).FirstOrDefaultAsync();
+		//	var id = oath.EmployeeID;
 			//var oath = await _context.registerations.FirstOrDefaultAsync(from i in reg where i.Email = userEmail select i);
 			var Project = new ProjectModel();
             Project.ProjectName = dto.ProjectName;
@@ -227,6 +227,61 @@ namespace TIMESHEETAPI.Controllers
 			return Ok(tasklist);
 
 		}
-  
-	}
+        [HttpGet("GetCurrentWeek")] 
+        public async Task<ActionResult<List<TaskModelDto>>> TaskByDate()
+        {
+           
+            // Calculate the start date and end date for the current week
+            DateTime currentDate = DateTime.Today;
+            DateTime startOfWeek = currentDate.AddDays(-(int)currentDate.DayOfWeek);
+            DateTime endOfWeek = startOfWeek.AddDays(6);
+
+            var tasklist = await (from i in _context.TaskModels
+                                  where  i.Task_date >= startOfWeek && i.Task_date <= endOfWeek
+                                  join P in _context.ProjectModels on i.ProjectID equals P.ProjectId
+                                  join A in _context.ActivityModels on i.ActivityID equals A.ActivityId
+                                  join R in _context.registerations on i.EmployeeID equals R.EmployeeID
+                                  select new AllTasksDto
+                                  {
+                                      ActivityName = i.Activity.ActivityName,
+                                      projectName = i.ProjectModel.ProjectName,
+                                      Description = i.Description,
+                                      TotalHours = i.Hours,
+                                      Created = i.Task_date,
+                                      UserEmail = i.registeration.Email,
+                                      UserName = i.registeration.UsserName
+                                  }).ToListAsync();
+
+            return Ok(tasklist);
+        }
+        [HttpGet("GetCurrentWeekByID")]
+        public async Task<ActionResult<List<TaskModelDto>>> TaskByDateID(int id)
+        {
+
+            // Calculate the start date and end date for the current week
+            DateTime currentDate = DateTime.Today;
+            DateTime startOfWeek = currentDate.AddDays(-(int)currentDate.DayOfWeek);
+            DateTime endOfWeek = startOfWeek.AddDays(6);
+
+            var tasklist = await (from i in _context.TaskModels
+                                  where i.EmployeeID == id && i.Task_date >= startOfWeek && i.Task_date <= endOfWeek
+                                  join P in _context.ProjectModels on i.ProjectID equals P.ProjectId
+                                  join A in _context.ActivityModels on i.ActivityID equals A.ActivityId
+                                  join R in _context.registerations on i.EmployeeID equals R.EmployeeID
+                                  select new AllTasksDto
+                                  {
+                                      ActivityName = i.Activity.ActivityName,
+                                      projectName = i.ProjectModel.ProjectName,
+                                      Description = i.Description,
+                                      TotalHours = i.Hours,
+                                      Created = i.Task_date,
+                                      UserEmail = i.registeration.Email,
+                                      UserName = i.registeration.UsserName
+                                  }).ToListAsync();
+
+            return Ok(tasklist);
+        }
+
+
+    }
 }

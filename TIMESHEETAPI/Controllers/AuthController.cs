@@ -40,7 +40,7 @@ namespace TIMESHEETAPI.Controllers
 				return BadRequest("User Already Exsist");
 			}
 			var verificationToken = GenerateRandomString();
-			var otptoken = GenerateOtp();
+		//	var otptoken = GenerateOtp();
 			var registeration = new Registeration
             {
                 Email = request.Email,
@@ -50,7 +50,7 @@ namespace TIMESHEETAPI.Controllers
 				IsVerified = false ,// Set to false initially,
                 IsOtpVerified = false ,
 				
-			 OtpVerificationToken = otptoken
+			// OtpVerificationToken = otptoken
 
 		};
 			_context.registerations.Add(registeration);
@@ -107,9 +107,11 @@ namespace TIMESHEETAPI.Controllers
             {
                 return BadRequest("Wrong Password");
             }
-           
-			
-			string token = CreateToken(registrations);
+
+            var otpToken = GenerateOtp();
+			registrations.OtpVerificationToken = otpToken;
+            await _context.SaveChangesAsync();
+            string token = CreateToken(registrations);
             var loginresponse = new loginResponse
             {
                 id = registrations.EmployeeID,

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TIMESHEETAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class fkintro : Migration
+    public partial class newsys : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -64,7 +64,11 @@ namespace TIMESHEETAPI.Migrations
                     EmployeeID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UsserName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    UsserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsVerified = table.Column<bool>(type: "bit", nullable: false),
+                    VerificationToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsOtpVerified = table.Column<bool>(type: "bit", nullable: false),
+                    OtpVerificationToken = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -94,7 +98,7 @@ namespace TIMESHEETAPI.Migrations
                     TaskId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Task_date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Task_date = table.Column<DateTime>(type: "date", nullable: false),
                     Hours = table.Column<int>(type: "int", nullable: false),
                     EmployeeID = table.Column<int>(type: "int", nullable: false),
                     ActivityID = table.Column<int>(type: "int", nullable: false),

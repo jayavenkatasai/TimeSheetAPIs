@@ -19,7 +19,7 @@ namespace TIMESHEETAPI.Services
 				try
 				{
 					var message = new MimeMessage();
-					message.From.Add(MailboxAddress.Parse("randal91@ethereal.email"));
+					message.From.Add(MailboxAddress.Parse("eleanora.haag4@ethereal.email"));
 					message.To.Add(MailboxAddress.Parse(email));
 					message.Subject = "Account Verification";
 
@@ -32,7 +32,7 @@ namespace TIMESHEETAPI.Services
 					using (var client = new SmtpClient())
 					{
 						client.Connect("smtp.ethereal.email", 587, SecureSocketOptions.StartTls);
-						client.Authenticate("randal91@ethereal.email", "bvbhj9M8KyfqH3aXvF");
+						client.Authenticate("eleanora.haag4@ethereal.email", "HPBSj4UR1MXSgucwfw");
 
 						await client.SendAsync(message);
 						client.Disconnect(true);

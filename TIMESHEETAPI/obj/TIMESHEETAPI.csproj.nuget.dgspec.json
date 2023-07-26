@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\TimeSheetAPIs\\TIMESHEETAPI\\TIMESHEETAPI.csproj": {}
+    "C:\\Users\\SAI\\CSharpTest\\TIMESHEETAPI\\TIMESHEETAPI\\TIMESHEETAPI.csproj": {}
   },
   "projects": {
-    "D:\\TimeSheetAPIs\\TIMESHEETAPI\\TIMESHEETAPI.csproj": {
+    "C:\\Users\\SAI\\CSharpTest\\TIMESHEETAPI\\TIMESHEETAPI\\TIMESHEETAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\TimeSheetAPIs\\TIMESHEETAPI\\TIMESHEETAPI.csproj",
+        "projectUniqueName": "C:\\Users\\SAI\\CSharpTest\\TIMESHEETAPI\\TIMESHEETAPI\\TIMESHEETAPI.csproj",
         "projectName": "TIMESHEETAPI",
-        "projectPath": "D:\\TimeSheetAPIs\\TIMESHEETAPI\\TIMESHEETAPI.csproj",
-        "packagesPath": "C:\\Users\\JAYA VENKATA SAI\\.nuget\\packages\\",
-        "outputPath": "D:\\TimeSheetAPIs\\TIMESHEETAPI\\obj\\",
+        "projectPath": "C:\\Users\\SAI\\CSharpTest\\TIMESHEETAPI\\TIMESHEETAPI\\TIMESHEETAPI.csproj",
+        "packagesPath": "C:\\Users\\SAI\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\SAI\\CSharpTest\\TIMESHEETAPI\\TIMESHEETAPI\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\JAYA VENKATA SAI\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\SAI\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],

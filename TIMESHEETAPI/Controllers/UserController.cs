@@ -130,5 +130,83 @@ namespace TIMESHEETAPI.Controllers
 			return Ok(tasklist);
 
 		}
-	}
+		[HttpGet("TasksByDate"),Authorize]
+		public async Task<ActionResult<List<TaskModelDto>>> TaskByDate(DateTime date)
+		{
+			var oemail = User?.FindFirstValue(ClaimTypes.Email);
+			var oid = await(from i in _context.registerations where i.Email == oemail select i.EmployeeID).FirstOrDefaultAsync();
+			var tasklist =  await (from i in _context.TaskModels
+                                   where i.EmployeeID == oid && i.Task_date == date
+                                   join P in _context.ProjectModels on i.ProjectID equals P.ProjectId
+                                   join A in _context.ActivityModels on i.ActivityID equals A.ActivityId
+                                   join R in _context.registerations on i.EmployeeID equals R.EmployeeID
+                                   select new AllTasksDto
+                                   {
+
+                                       ActivityName = i.Activity.ActivityName,
+                                       projectName = i.ProjectModel.ProjectName,
+                                       Description = i.Description,
+                                       TotalHours = i.Hours,
+                                       Created = i.Task_date,
+                                       UserEmail = i.registeration.Email,
+                                       UserName = i.registeration.UsserName
+                                   }).ToListAsync();
+			return Ok(tasklist);
+
+		}
+        [HttpGet("TasksByDateRange"),Authorize]
+        public async Task<ActionResult<List<TaskModelDto>>> TaskByDateRange(DateTime startdate,DateTime EndDate)
+        {
+            var oemail = User?.FindFirstValue(ClaimTypes.Email);
+            var oid = await (from i in _context.registerations where i.Email == oemail select i.EmployeeID).FirstOrDefaultAsync();
+            var tasklist = await (from i in _context.TaskModels
+                                  where i.EmployeeID == oid && i.Task_date >= startdate && i.Task_date <= EndDate
+                                  join P in _context.ProjectModels on i.ProjectID equals P.ProjectId
+                                  join A in _context.ActivityModels on i.ActivityID equals A.ActivityId
+                                  join R in _context.registerations on i.EmployeeID equals R.EmployeeID
+                                  select new AllTasksDto
+                                  {
+
+                                      ActivityName = i.Activity.ActivityName,
+                                      projectName = i.ProjectModel.ProjectName,
+                                      Description = i.Description,
+                                      TotalHours = i.Hours,
+                                      Created = i.Task_date,
+                                      UserEmail = i.registeration.Email,
+                                      UserName = i.registeration.UsserName
+                                  }).ToListAsync();
+            return Ok(tasklist);
+
+        }
+		[HttpGet("TaskByCurrentweek"), Authorize]
+        public async Task<ActionResult<List<TaskModelDto>>> TaskBycurrentweek()
+        {
+            var oemail = User?.FindFirstValue(ClaimTypes.Email);
+            var oid = await (from i in _context.registerations where i.Email == oemail select i.EmployeeID).FirstOrDefaultAsync();
+
+            // Calculate the start date and end date for the current week
+            DateTime currentDate = DateTime.Today;
+            DateTime startOfWeek = currentDate.AddDays(-(int)currentDate.DayOfWeek);
+            DateTime endOfWeek = startOfWeek.AddDays(6);
+
+            var tasklist = await (from i in _context.TaskModels
+                                  where i.EmployeeID == oid && i.Task_date >= startOfWeek && i.Task_date <= endOfWeek
+                                  join P in _context.ProjectModels on i.ProjectID equals P.ProjectId
+                                  join A in _context.ActivityModels on i.ActivityID equals A.ActivityId
+                                  join R in _context.registerations on i.EmployeeID equals R.EmployeeID
+                                  select new AllTasksDto
+                                  {
+                                      ActivityName = i.Activity.ActivityName,
+                                      projectName = i.ProjectModel.ProjectName,
+                                      Description = i.Description,
+                                      TotalHours = i.Hours,
+                                      Created = i.Task_date,
+                                      UserEmail = i.registeration.Email,
+                                      UserName = i.registeration.UsserName
+                                  }).ToListAsync();
+
+            return Ok(tasklist);
+        }
+
+    }
 }

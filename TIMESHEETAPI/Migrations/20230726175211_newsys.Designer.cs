@@ -12,8 +12,8 @@ using TIMESHEETAPI.Data;
 namespace TIMESHEETAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230726073452_loginverification")]
-    partial class loginverification
+    [Migration("20230726175211_newsys")]
+    partial class newsys
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
