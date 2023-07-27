@@ -17,8 +17,10 @@ namespace TIMESHEETAPI.DataModels
 		public string? VerificationToken { get; set; }
         public bool IsOtpVerified { get;set; }
         public string? OtpVerificationToken { get; set; }
+ 
+        public string? PasswordToken { get; set; }
 
 
 
-	}
+    }
 }

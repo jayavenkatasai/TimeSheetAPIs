@@ -118,7 +118,7 @@ namespace TIMESHEETAPI.Controllers
                 code = token
 
             };
-			await _emailService.SendVerificationEmailAsync(registrations.Email, registrations.OtpVerificationToken);
+			await _emailService.SendOtpVerificationEmailAsync(registrations.Email, registrations.OtpVerificationToken);
 
 			return Ok(loginresponse);
         }
@@ -142,7 +142,57 @@ namespace TIMESHEETAPI.Controllers
 			// You can return a success message or redirect the user to a success page after verification.
 			return Ok("Email verification successful.");
 		}
+		[HttpPost("ForgotPassword")]
+		public async Task<ActionResult> ForgotPassword(string email)
+		{
+			var userdt = await _context.registerations.FirstOrDefaultAsync(r=>r.Email ==  email);
+			if (userdt == null)
+			{
+				return BadRequest("no user found");
+			}
+			string tok = GenerateOtp();
+			userdt.PasswordToken = tok;
+			await _context.SaveChangesAsync();
+            await _emailService.SendOtpVerificationEmailAsync(userdt.Email, userdt.PasswordToken);
 
+			return Ok("Verification Otp is sent to mail");
+
+        }
+		[HttpPost("ResetPassword")]
+		public async Task<ActionResult> ResetPassword(ForgotPasswordDto forgot)
+		{
+			var userdt = await _context.registerations.FirstOrDefaultAsync(r => r.Email == forgot.Email);
+
+            var oauthdt = (from u in _context.UserOauths
+                           where u.EmployeeID == userdt.EmployeeID
+                           select u).FirstOrDefault();
+            if (userdt == null) 
+			{
+				return BadRequest("Not Found The User");
+			}
+			if(forgot.ConfirmPassword == null)
+			{
+			    return BadRequest("Please Enter the password");
+			}
+			if(forgot.Token != userdt.PasswordToken)
+			{
+				return BadRequest("Invalid Token");
+			}
+			CreatePasswordHash(forgot.ConfirmPassword, out byte[] passwordHash, out byte[] passworSalt);
+			if(oauthdt == null)
+			{
+				return BadRequest("No user found");
+			}
+
+			oauthdt.PasswordHash = passwordHash;
+			oauthdt.PasswordSalt = passworSalt;
+			userdt.PasswordToken = null;
+
+            await _context.SaveChangesAsync();
+
+            return Ok("Password reset successfully");
+
+        }
 		private string CreateToken(Registeration registeration)
         {
             List<Claim> claims = new List<Claim>
