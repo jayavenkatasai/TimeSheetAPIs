@@ -51,7 +51,7 @@ namespace TIMESHEETAPI.Services
                 try
                 {
                     var message = new MimeMessage();
-                    message.From.Add(MailboxAddress.Parse("skyla.jacobs@ethereal.email"));
+                    message.From.Add(MailboxAddress.Parse("golden.nader@ethereal.email"));
                     message.To.Add(MailboxAddress.Parse(email));
                     message.Subject = "Otp Verification";
 
@@ -64,7 +64,7 @@ namespace TIMESHEETAPI.Services
                     using (var client = new SmtpClient())
                     {
                         client.Connect("smtp.ethereal.email", 587, SecureSocketOptions.StartTls);
-                        client.Authenticate("skyla.jacobs@ethereal.email", "xubBMe7mE9F8RFjmG6");
+                        client.Authenticate("golden.nader@ethereal.email", "\tqX6UPPwvdpPWCPyxrN");
 
                         await client.SendAsync(message);
                         client.Disconnect(true);

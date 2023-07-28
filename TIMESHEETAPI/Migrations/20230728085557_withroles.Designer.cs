@@ -12,8 +12,8 @@ using TIMESHEETAPI.Data;
 namespace TIMESHEETAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230727161530_fprgotpassword")]
-    partial class fprgotpassword
+    [Migration("20230728085557_withroles")]
+    partial class withroles
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -123,6 +123,9 @@ namespace TIMESHEETAPI.Migrations
                     b.Property<string>("PasswordToken")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("RoleID")
+                        .HasColumnType("int");
+
                     b.Property<string>("UsserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -132,7 +135,26 @@ namespace TIMESHEETAPI.Migrations
 
                     b.HasKey("EmployeeID");
 
+                    b.HasIndex("RoleID");
+
                     b.ToTable("registerations");
+                });
+
+            modelBuilder.Entity("TIMESHEETAPI.DataModels.RolesModel", b =>
+                {
+                    b.Property<int>("RoleID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleID"));
+
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("RoleID");
+
+                    b.ToTable("RoleModels");
                 });
 
             modelBuilder.Entity("TIMESHEETAPI.DataModels.TaskModelDto", b =>
@@ -226,6 +248,17 @@ namespace TIMESHEETAPI.Migrations
                     b.HasKey("id");
 
                     b.ToTable("superHeroes");
+                });
+
+            modelBuilder.Entity("TIMESHEETAPI.DataModels.Registeration", b =>
+                {
+                    b.HasOne("TIMESHEETAPI.DataModels.RolesModel", "Roles")
+                        .WithMany()
+                        .HasForeignKey("RoleID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Roles");
                 });
 
             modelBuilder.Entity("TIMESHEETAPI.DataModels.TaskModelDto", b =>

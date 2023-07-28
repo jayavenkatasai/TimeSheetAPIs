@@ -4,5 +4,6 @@
     {
         public int id { get; set; }
         public string code { get; set; }
+        public int RoleID { get; set; }
     }
 }

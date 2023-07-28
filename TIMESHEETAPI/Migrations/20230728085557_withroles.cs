@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TIMESHEETAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class newsys : Migration
+    public partial class withroles : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -58,21 +58,16 @@ namespace TIMESHEETAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "registerations",
+                name: "RoleModels",
                 columns: table => new
                 {
-                    EmployeeID = table.Column<int>(type: "int", nullable: false)
+                    RoleID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UsserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsVerified = table.Column<bool>(type: "bit", nullable: false),
-                    VerificationToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsOtpVerified = table.Column<bool>(type: "bit", nullable: false),
-                    OtpVerificationToken = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    RoleName = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_registerations", x => x.EmployeeID);
+                    table.PrimaryKey("PK_RoleModels", x => x.RoleID);
                 });
 
             migrationBuilder.CreateTable(
@@ -89,6 +84,32 @@ namespace TIMESHEETAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_superHeroes", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "registerations",
+                columns: table => new
+                {
+                    EmployeeID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UsserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsVerified = table.Column<bool>(type: "bit", nullable: false),
+                    VerificationToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsOtpVerified = table.Column<bool>(type: "bit", nullable: false),
+                    OtpVerificationToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PasswordToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RoleID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_registerations", x => x.EmployeeID);
+                    table.ForeignKey(
+                        name: "FK_registerations_RoleModels_RoleID",
+                        column: x => x.RoleID,
+                        principalTable: "RoleModels",
+                        principalColumn: "RoleID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -149,6 +170,11 @@ namespace TIMESHEETAPI.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_registerations_RoleID",
+                table: "registerations",
+                column: "RoleID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TaskModels_ActivityID",
                 table: "TaskModels",
                 column: "ActivityID");
@@ -192,6 +218,9 @@ namespace TIMESHEETAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "registerations");
+
+            migrationBuilder.DropTable(
+                name: "RoleModels");
         }
     }
 }

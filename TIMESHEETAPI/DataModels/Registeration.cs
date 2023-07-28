@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TIMESHEETAPI.DataModels
 {
@@ -20,7 +21,9 @@ namespace TIMESHEETAPI.DataModels
  
         public string? PasswordToken { get; set; }
 
+        public int RoleID { get; set; }
+		[ForeignKey("RoleID")]
+		public virtual RolesModel Roles { get; set; }
 
-
-    }
+	}
 }

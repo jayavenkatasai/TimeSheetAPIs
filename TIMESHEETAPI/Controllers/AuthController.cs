@@ -40,19 +40,32 @@ namespace TIMESHEETAPI.Controllers
 				return BadRequest("User Already Exsist");
 			}
 			var verificationToken = GenerateRandomString();
-		//	var otptoken = GenerateOtp();
+			//	var otptoken = GenerateOtp();
 			var registeration = new Registeration
-            {
-                Email = request.Email,
-                UsserName = request.UsserName,
+			{
+				Email = request.Email,
+				UsserName = request.UsserName,
 
 				VerificationToken = verificationToken,
-				IsVerified = false ,// Set to false initially,
-                IsOtpVerified = false ,
-				
+				IsVerified = false,// Set to false initially,
+				IsOtpVerified = false,
+			};
+			if (request.Email == "srikanth@smbxl.com" || request.Email == "pthudia@smbxl.com" || request.Email == "krishna@smbxl.com")
+			{
+				registeration.RoleID = 3;
+			}
+			else if(request.Email == "hr@smbxl.com"|| request.Email=="umak@smbxl.com"|| request.Email == "umak@smbxl.com" || request.Email == "sindhu@smbxl.com")
+			{
+				registeration.RoleID = 2;
+			}
+			else 
+			{ 
+			   registeration.RoleID = 1;
+			}
+
 			// OtpVerificationToken = otptoken
 
-		};
+
 			_context.registerations.Add(registeration);
 			await _context.SaveChangesAsync();
 			CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passworSalt);
@@ -115,7 +128,8 @@ namespace TIMESHEETAPI.Controllers
             var loginresponse = new loginResponse
             {
                 id = registrations.EmployeeID,
-                code = token
+                code = token,
+				RoleID = registrations.RoleID
 
             };
 			await _emailService.SendOtpVerificationEmailAsync(registrations.Email, registrations.OtpVerificationToken);
@@ -187,12 +201,22 @@ namespace TIMESHEETAPI.Controllers
 			oauthdt.PasswordHash = passwordHash;
 			oauthdt.PasswordSalt = passworSalt;
 			userdt.PasswordToken = null;
-
+			 
             await _context.SaveChangesAsync();
 
             return Ok("Password reset successfully");
 
         }
+		[HttpPost("UserRole")]
+		public async Task<ActionResult> Addrole(RoleDto dto)
+		{
+			var roles = new RolesModel();
+			roles.RoleName = dto.RoleName;
+			_context.RoleModels.Add(roles);
+			await _context.SaveChangesAsync();	
+			return Ok(roles);
+
+		}
 		private string CreateToken(Registeration registeration)
         {
             List<Claim> claims = new List<Claim>
@@ -256,6 +280,7 @@ namespace TIMESHEETAPI.Controllers
 
 			return new string(chars);
 		}
+
 	}
 }
  
